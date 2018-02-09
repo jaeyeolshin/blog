@@ -31,7 +31,7 @@ public class Trouble<T> {
 이 코드를 컴파일 하려고 하면 다음과 같은 컴파일 에러가 발생한다.
 
 ```
-Generic.java:17: error: incompatible types: Object cannot be converted to String
+Trouble.java:17: error: incompatible types: Object cannot be converted to String
         for (String str : t.getStrs()) {
                                    ^
 ```
