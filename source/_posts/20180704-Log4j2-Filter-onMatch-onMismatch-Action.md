@@ -1,13 +1,13 @@
 ---
 title: Log4j2 Filter의 onMatch, onMismatch 값들의 의미
-date: 2018-07-04 22:00
+date: 2018-07-04 23:55
 categories:
 - Log4j2
 tags:
 - log4j2
 ---
 
-Log4j2의 Filter를 사용하면 다양한 방법을 로그를 제어할 수 있다. [Log4j2 - Filters][1] 문서를 보면 Log4j2가 제공하는 필터의 종류와 설정 방법이 설명되어 있다. 필터 종류마다 설정해야 하는 속성들이 조금씩 다르지만 모든 필터는 `onMatch`, `onMismatch` 속성을 갖고있다. 이 속성들은 각각 Filter에서 정의한 값과 매칭될 때 또는 그렇지 않을 때 동작을 의미한다. 여기에 들어갈 수 있는 값은 `ACCEPT`, `DENY`, `NEUTRAL` 세가지가 있다. 그런데 잠깐, `ACCEPT`는 로그를 쓰겠다는 의미일 것이고, `DENY`는 쓰지 않겠다는 의미일 것이다. 그럼 도대체 `NEUTRAL`은 뭘까?<!-- more -->
+Log4j2의 Filter를 사용하면 다양한 방법을 로그를 제어할 수 있다. [Log4j2 - Filters][1] 문서를 보면 Log4j2가 제공하는 필터의 종류와 설정 방법이 설명되어 있다. 필터 종류마다 설정해야 하는 속성들이 조금씩 다르지만 모든 필터는 공통적으로 `onMatch`, `onMismatch` 속성을 갖고있다. 이 속성들은 각각 Filter에서 정의한 값과 매칭될 때 또는 그렇지 않을 때의 동작을 의미한다. 여기에 들어갈 수 있는 값은 `ACCEPT`, `DENY`, `NEUTRAL` 세가지이다. 그런데 잠깐, `ACCEPT`는 로그를 쓰겠다는 의미일 것이고, `DENY`는 쓰지 않겠다는 의미일 것이다. 그럼 도대체 `NEUTRAL`은 뭘까?<!-- more -->
 
 ## 단일 Filter에서 NEUTRAL
 단일 Filter에서는 `ACCEPT`와 `NEUTRAL`에 차이가 없다. 다시 말해, `DENY`만 아니면 필터를 통과하고 로그를 남긴다. 디버거에서 로그 로직을 따라가다 보면 다음과 같은 코드를 볼 수 있다. AbstractFilterable.java 코드의 일부이다.
@@ -59,7 +59,7 @@ public class App {
 로그가 잘 남았다면 `onMatch="NEUTRAL"`로 수정하여 다시 테스트 해보자. `ACCEPT`일 때와 동일하게 로그가 남을 것이다.
 
 ## CompositeFilter에서 NEUTRAL
-`NEUTRAL`이 `ACCEPT`와 차이를 갖는 필터는 CompositeFilter이다. CompositeFilter는 여러 필터를 `<Filters>` 태그로 묶어서 정의한다. 앞서 정의했던 필터에 ThreadContextMapFilter를 추가하여 CompositeFilter를 정의해보자.
+`NEUTRAL`이 `ACCEPT`와 다르게 동작하는 필터는 CompositeFilter이다. CompositeFilter는 여러 필터를 `<Filters>` 태그로 묶어서 정의한다. CompositeFilter는 `<Filters>` 내부에 정의된 순서대로 필터 로직을 수행한다. 앞서 정의했던 필터에 ThreadContextMapFilter를 추가하여 CompositeFilter를 정의해보자.
 
 ```xml
 <Logger name="myapp">
@@ -134,9 +134,10 @@ public Result filter(final Logger logger, final Level level, final Marker marker
 
 다시 테스트해보면 "로그0"만 남는 것을 확인할 수 있다.
 
+## 아쉬운 네이밍
 > ACCEPT도 DENY도 아닌 중립적인 동작이라니...
 
-log4j2 개발자자들은 더 미세한 로그 필터링을 위해 `ACCEPT`, `DENY`, `NEUTRAL` 세 개의 값을 도입하였을 것이다. 하지만 개발을 하다보면 '이것 아니면 저것'이라는 이분법적 사고에 익숙해지기 때문에 `NEUTRAL`이라는 값은 개발자들에게 혼란을 주는 것 같다. 어쨌든 이제는 그 의미를 알았으니 자유롭게 log4j2의 Filter 기능을 활용해보자!
+log4j2 개발자들은 섬세한 로그 필터링을 지원하기 위해 `ACCEPT`, `DENY`, `NEUTRAL` 세 개의 값을 도입하였을 것이다. 이렇게 성능 좋고 섬세한 로그 라이브러리를 만들어 준 것은 정말 감사한 일이다. 하지만 개발을 하다보면 '이것 아니면 저것'이라는 이분법적 사고에 익숙해지기 때문에 `NEUTRAL`이라는 값은 다소 혼란스럽게 느껴진다. 어쨌든 이제는 그 의미를 알았으니 자유롭게 log4j2의 Filter 기능을 활용해보자!
 
 ## 참고 문서
 [Log4j2 - Filters][1]
