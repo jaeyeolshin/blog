@@ -88,7 +88,7 @@ public class App {
         LOG.debug(TEST, "로그0");
         LOG.debug("로그1");
         ThreadContext.remove("debug");
-        LOG.debug("로그2");
+        LOG.debug(TEST, "로그2");
         ...
     }
 }
@@ -137,7 +137,7 @@ public Result filter(final Logger logger, final Level level, final Marker marker
 ## 아쉬운 네이밍
 > ACCEPT도 DENY도 아닌 중립적인 동작이라니...
 
-log4j2 개발자들은 섬세한 로그 필터링을 지원하기 위해 `ACCEPT`, `DENY`, `NEUTRAL` 세 개의 값을 도입하였을 것이다. 이렇게 성능 좋고 섬세한 로그 라이브러리를 만들어 준 것은 정말 감사한 일이다. 하지만 개발을 하다보면 '이것 아니면 저것'이라는 이분법적 사고에 익숙해지기 때문에 `NEUTRAL`이라는 값은 다소 혼란스럽게 느껴진다. 어쨌든 이제는 그 의미를 알았으니 자유롭게 log4j2의 Filter 기능을 활용해보자!
+log4j2 개발자들은 섬세한 로그 필터링을 지원하기 위해 `ACCEPT`, `DENY`, `NEUTRAL` 세 개의 값을 도입하였을 것이다. 하지만 개발을 하다보면 '이것 아니면 저것'이라는 이분법적 사고에 익숙해지기 때문에 `NEUTRAL`이라는 값은 다소 혼란스럽게 느껴진다. [Log4j2 - Filters][1] 문서에 이 내용이 나와있지 않은 것도 아쉬운 점이다. 그러나 알고보면 어렵지 않은 내용이고, 이렇게 성능 좋고 섬세한 로그 라이브러리를 만들어 준 것은 정말 감사한 일이다. 이제는 그 의미를 알았으니 자유롭게 log4j2의 Filter 기능을 활용해보자!
 
 ## 참고 문서
 [Log4j2 - Filters][1]
