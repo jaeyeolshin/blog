@@ -106,7 +106,7 @@ public class LoopTask implements Runnable {
 `InterruptedException`이 발생할 때는 스레드의 interrupt state가 설정되지 않는다. 따라서 예외 처리문에서 직접 interrupt state를 설정하여 작업이 종료되게 해야한다. 여기서 `Thread.currentThread().interrupt()`를 호출하는 대신 그냥 `break`로 빠져나가면 안되냐고 생각할 수 있다. 그렇게 하면 작업은 종료되지만 스레드를 관리하는 상위 레이어(여기서는 스레드풀)에 인터럽트 발생 여부를 알릴 수 없게 된다. 스레드풀 역시 발생한 인터럽트를 적절히 처리할 수 있도록 interrupt state를 설정해야 한다.
 
 ## 인터럽트 처리 - 직접 스레드를 생성하는 경우
-스레드풀을 사용하는 것과 달리 스레드를 직접 생성하여 사용하면 스레드를 직접 참조할 수 있다. 그리고 인터럽트를 처리할 때 스레드를 관리하는 상위 레이어에 인터럽트 상태를 알릴 필요도 없기 때문에 굳이 `InterruptedException` 발생시 interrupt state를 설정하지 않아도 된다. 하지만 습관처럼 루프 종료 조건에 interrupt state 확인을 추가하고, `InterruptedException` 발생시 interrupt state를 설정하는 것이 좋다. 이렇게 하면 스레드를 직접 생성하여 처리하던 로직을 스레드풀에서 수행하도록 변경해도 문제가 없다.
+스레드풀을 사용하는 것과 달리 스레드를 직접 생성하여 사용하면 스레드를 직접 참조할 수 있다. 인터럽트를 처리할 때 스레드를 관리하는 상위 레이어에 인터럽트 상태를 알릴 필요도 없기 때문에 굳이 `InterruptedException` 발생시 interrupt state를 설정하지 않아도 된다. 굳이 인터럽트 메커니즘을 사용하지 않고 플래그 변수로 루프를 종료하도록 해도 된다. 하지만 개인적으로는 습관처럼 루프 종료 조건에 interrupt state 확인을 추가하고, `InterruptedException` 발생시 interrupt state를 설정하는 것이 좋은 것 같다. 이렇게 하면 스레드를 직접 생성하여 처리하던 로직을 스레드풀에서 수행하도록 변경해도 문제가 없다.
 
 ```java
 public class LoopTaskThread extends Thread {
@@ -135,13 +135,14 @@ t.interrupt();
 * 인터럽트는 스레드를 종료하기 위한 메커니즘이다.
 * 테스트 코드나 장난감 코드가 아니라면 인터럽트를 적절히 처리하도록 하자.
 * 멀티스레드로 동작하는 코드에 무한 루프 혹은 `InterruptedException`을 던지는 메서드 호출이 존재한다면, 아래 코드를 관용구처럼 사용하자.
+
 ```java
 while (!Thread.currentThread().isInterrupted()) {
   try {
     // Thread.sleep(), Future.get(),
     // BlockingQueue.take() 등이 여기올 수 있다.
   } catch (InterruptedException ex) {
-    this.interrupt();
+    Thread.currentThread().interrupt();
   }
 }
 ```
