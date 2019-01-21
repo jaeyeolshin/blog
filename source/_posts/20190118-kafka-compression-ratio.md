@@ -1,5 +1,5 @@
 ---
-title: Kafka 메시지 압축으로 고생한 이야기
+title: Kafka 메시지 압축률 안나와서 고생한 이야기
 date: 2019-01-18 22:00
 categories:
 - Kafka
